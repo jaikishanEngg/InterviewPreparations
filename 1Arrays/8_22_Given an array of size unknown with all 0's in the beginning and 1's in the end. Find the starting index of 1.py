@@ -15,17 +15,31 @@ Solution:
     we have minimized the array now. In this subarray we know the bounds. 
     so we can apply binary search and find the first index of 1
 '''
-from math import log, floor, ceil
 
-def linear_search(inp, start_i, end_i):
+from math import log, floor, ceil
+import math
+def isElementAtCurrentIndexOne(inputArray, index):
+    return inputArray[index] == 1
+
+def isElementAtCurrentIndexZero(inputArray, index):
+    return inputArray[index] == 0
+
+def getMiddleIndex(lowerIndex, higherIndex):
+    return ceil((lowerIndex + higherIndex)/2)
+
+def getPreviousTwoExponentIndex(index):
+    return 
+    
+def linearlySearchForElementOne(inputArray, startIndex, endIndex):
     try:
-        for i in range(start_i, end_i):
-            if(inp[i] == 1):
-                return i
+        for index in range(startIndex, endIndex):
+            if(isElementAtCurrentIndexOne(inputArray,index)):
+                return index
     except IndexError:
-        print("No element 1 found in the array!")
+        return -1
+        #print("Element 1 does not found in the input array!")
         
-def slice_array_atFirstIndex_one(inp):
+def sliceArrayAtFirstIndexOfElementOne(inputArray):
     '''
     In the unknown size of the binary array, where all the 0's at the left and all the 1's at the end
     As we need to find the first index of 1, as the size is unknown we cannot apply binary search.
@@ -35,47 +49,48 @@ def slice_array_atFirstIndex_one(inp):
     if exception doesn't raise, then we take the proper sub-array and apply binary search on it to find the first index of 1 in that sub-array
     '''
     try:
-        iteration = i =  1
-        while(1):
-            if(inp[i] == 1):
+        curr_iteration = index =  1
+        errorFlag = False
+        while(True):
+            if(isElementAtCurrentIndexOne(inputArray,index)):
                 #return the upper index with errorstatus False
-                return i, False
+                return index, errorFlag
             else:
-                i = 2**iteration
-            iteration += 1
+                index = int(math.pow(2,curr_iteration))
+            curr_iteration += 1
     except IndexError:
+        errorFlag = True
         #return the upper index with errorstatus True
-        return i, True
+        return index, errorFlag   
 
-def binary_search(inp,l_i,h_i):
+def searchForElementOneApplyingBinarySearch(inputArray,lowerIndex,higherIndex, searchElement = 1):
     '''
     As the all zeros are left and all the ones are at the right - the array is already sorted.
     So binary serach can be applied.
     '''
-    m_i = ceil((l_i + h_i)/2)
-    if(inp[m_i] == 1 and inp[m_i - 1] != 1):
-        return m_i
-    elif(inp[m_i] < 1):
-        l_i = m_i
-        return binary_search(inp,l_i,h_i)
+    middleIndex = getMiddleIndex(lowerIndex,higherIndex)
+    if(inputArray[middleIndex] == searchElement and inputArray[middleIndex - 1] != searchElement):
+        return middleIndex
+    elif(inputArray[middleIndex] < searchElement):
+        lowerIndex = middleIndex
+        return searchForElementOneApplyingBinarySearch(inputArray,lowerIndex,higherIndex)
     else:
-        h_i = m_i
-        return binary_search(inp,l_i,h_i)
+        higherIndex = middleIndex
+        return searchForElementOneApplyingBinarySearch(inputArray,lowerIndex,higherIndex)
     
-def find_beginning_one(inp):
-    h_i, error_status = slice_array_atFirstIndex_one(inp)
-    l_i = floor(2** (int(log(h_i,2)) - 1))
-    if(error_status):
+def findStartingIndexOfElementOne(inputArray):
+    higherIndex, errorFlag = sliceArrayAtFirstIndexOfElementOne(inputArray)
+    lowerIndex = floor(higherIndex/2)
+    #floor(2** (int(log(higherIndex,2)) - 1))
+    if(errorFlag):
         #As the step index raised the error, from the previous step index perform linear search
-        return linear_search(inp, l_i, h_i)
+        return linearlySearchForElementOne(inputArray, lowerIndex, higherIndex)
     else:
         #As there is no index error, we have got a fixed proper sub-array; so we know the boundaries and can apply binary search
-        return binary_search(inp,l_i,h_i)
+        return searchForElementOneApplyingBinarySearch(inputArray,lowerIndex,higherIndex)
     
-
 #z = list(map(int,"0 0 0 0 0 0 1 1 1 1 1 1 1 1 1".split()))
-z = list(map(int,input().split()))
+rawinputArray = input().split()
+inputArray = list(map(int,rawinputArray))
 
-#print(binary_search(z,0,14))    
-
-print(find_beginning_one(z))
+print(findStartingIndexOfElementOne(inputArray))
