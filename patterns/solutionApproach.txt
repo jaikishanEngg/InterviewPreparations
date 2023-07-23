@@ -1,0 +1,53 @@
+
+Solution Approach
+#size 3 (input number)
+Output:
+----c----
+--c-b-c--
+c-b-a-b-c
+--c-b-c--
+----c----
+
+observations: Lets observe the first half of the output:
+----	c		----
+--c-	b		-c--
+c-b-	a		-b-c
+
+(right hand side pattern is the reverse of left hand side)
+and the next lines are the previously generated ones.  
+
+So, Ideally if we can generate the first half left parts of the pattern then we can easily make the rest(by just reversing and printing it)
+
+part-1: generate a string pattern of size n. for n = 3, it is "a-b-c".	reverse("a-b-c") ==> "c-b-a"
+part-2: compute whitespaces: whitespace*(lengthOfStringPattern - (2*i - 1))
+							lengthOfStringPattern = 5
+							for i = 1 ==> 5 - (2*i)-1	=>	5 - 2-1 = 4
+								after 4 whitespaces take the substring of part-1 till str_pattern[:(2*i -1)] #slicing, that would be
+								----c	then we can just combine it with reverse this temp(by excluding the last char) result to build the first line of output
+								----c----
+							
+							for i = 2 ==> 5 - (2*i) -1	=>	5 - 4 - 1 = 2
+								after 2 whitespace str_pattern[:(2*i -1)]	4-1=3
+								--c-b then we can just combine it with reverse this temp(by excluding the last char) result to build the first line of output
+								--c-b-c--
+							for i = 3 ==> 5 - (2*i) - 1	=>	5 - 6-1 = 0
+
+----	c		----
+--c-	b		-c--
+c-b-	a		-b-c
+
+--c-b-c--
+----c----
+
+
+for n = 5
+--------	e			--------
+------e-	d			-e------
+----e-d-	c			-d-e----
+--e-d-c-	b			-c-d-e--
+e-d-c-b-	a			-b-c-d-e
+
+--e-d-c-b-c-d-e--
+----e-d-c-d-e----
+------e-d-e------
+--------e--------
